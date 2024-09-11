@@ -22,7 +22,7 @@ function App() {
         <Route path="/discussion" element={<Discussion />} />
         <Route path="/sdg11" element={<Sdg11 />} />
         {/*<Route path="/award" element={<Awards />}/>*/}
-        <Route path="/sdg11/:targetNum" element={<QuizPage />} />
+        <Route path="/sdg11/:targetNum/quiz" element={<QuizPage />} />
       </Routes>
 
     </>

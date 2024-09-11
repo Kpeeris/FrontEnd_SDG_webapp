@@ -87,7 +87,7 @@ function ImageComponent({ imageName, top, left, width, height, target}) {
                 <p className="font-bold">
                     Click below when you're ready to {moduleDone ? "redo" : "start"} the quiz
                 </p>
-                <Link to={`/sdg11/${target}`} className="current">
+                <Link to={`/sdg11/${target}/quiz`} className="current">
                     <button className="buttonStart" style={{"color": "white", width: '465px', fontSize: '1em', backgroundColor: '#16A34A'}}>{status}</button>
                 </Link>
             </Modal.Body>
