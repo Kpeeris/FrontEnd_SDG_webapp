@@ -1,11 +1,38 @@
-import React, { useState,useEffect } from 'react'
-import 'quill/dist/quill.snow.css'
-import ReactQuill from 'react-quill' 
+import React, { useState,useEffect } from 'react';
+import 'quill/dist/quill.snow.css';
+import ReactQuill from 'react-quill';
+import { Button } from "@/components/ui/button";
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import db from '../../firebaseFiles/firebaseConfig.js';
+//import parse from 'html-react-parser';
 
-const EditableBlock = ({content}) => {
+const EditableBlock = ({moduleId}) => {
     const [textEditorShow, setTextEditorShow] = useState(false)
 
     let admin = true
+
+    const [content, setContent] = useState("")
+
+    const getContent = async (moduleId) => {
+        try {
+            const docRef = doc(db, `quizzes/sdg11t${moduleId}`)
+            const docSnap = await getDoc(docRef)
+    
+            if (docSnap.exists()) {
+                console.log((docSnap.data()).content)
+                setContent((docSnap.data()).content)
+            } else {
+                console.log('Document does not exist')
+            }
+        } catch (e) {
+            console.error('Error retrieving document: ', e)
+        }
+    }
+
+    useEffect(() => {
+        getContent(moduleId)
+        console.log(content)
+    }, [])
 
     //second commit
 
@@ -34,12 +61,34 @@ const EditableBlock = ({content}) => {
     "link", "image", "align", "size",
     ];
 
-    const handleProcedureContentChange = (content) => {
-    console.log("content---->", content);
+    const handleProcedureContentChange = (newContent) => {
+        setContent(newContent)
+        console.log("content---->", newContent);
+        
     }
 
     const [buttonState, setButtonState] = useState('Edit')
-    const handleClick = () => {
+
+    const adminContentWrite = async (newContent) => {
+        //const db = getDatabase();
+        //setContent(newContent)
+        const docRef = doc(db, `quizzes/sdg11t${moduleId}`)
+
+        console.log("trying to update")
+        console.log("module id is: ", moduleId)
+
+        try{
+            console.log("doc reference is :  ", docRef)
+            await updateDoc(docRef, { content: newContent })
+            console.log("update successful")
+        } catch (error){
+            console.error("update unsuccessful")
+        }
+        
+    }
+
+    const handleClick = (newContent) => {
+        console.log("NEW CONTENT", newContent)
         if(buttonState === 'Edit'){
             setTextEditorShow(true)
             //block.content
@@ -47,6 +96,12 @@ const EditableBlock = ({content}) => {
         } else {
             setTextEditorShow(false)
             setButtonState('Edit')
+            if(newContent){
+                console.log("new content is --->", newContent)
+                adminContentWrite(newContent)
+            } else {
+                console.log("NO NEW CONTENT")
+            }
         }
         //open up the text editor here
     }
@@ -60,17 +115,17 @@ const EditableBlock = ({content}) => {
                     {/*{block.subheading ? <h3>{block.subheading}</h3> : null}
                     {block.body ? <p>{block.body}</p> : null}
                     {block.media ? <p>Image</p> : null}*/}
-                    
+
                 </div>
             ) : 
             <div>
                 <ReactQuill
                     theme="snow"
-                    modules={modules}
-                    formats={formats}
+                    modules={ modules }
+                    formats={ formats }
                     value={ content }
                     onChange={handleProcedureContentChange}
-                    style={{ height: "75px" }}
+                    style={{ height: "300px" }}
                 >
                 </ReactQuill>
 
@@ -79,7 +134,8 @@ const EditableBlock = ({content}) => {
             }
             <br />
             <br />
-            {admin ? <button onClick={ handleClick }>{ buttonState }</button> : null}
+            <br />
+            {admin ? <Button onClick={ () => {handleClick(content)} }>{ buttonState }</Button> : null}
             
             
             
