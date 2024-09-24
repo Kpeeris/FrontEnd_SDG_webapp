@@ -4,7 +4,7 @@ import ReactQuill from 'react-quill';
 import { Button } from "@/components/ui/button";
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import db from '../../firebaseFiles/firebaseConfig.js';
-//import parse from 'html-react-parser';
+import ReactHtmlParser from 'html-react-parser';
 
 const EditableBlock = ({moduleId}) => {
     const [textEditorShow, setTextEditorShow] = useState(false)
@@ -12,6 +12,8 @@ const EditableBlock = ({moduleId}) => {
     let admin = true
 
     const [content, setContent] = useState("")
+    const [parsedContent, setParsedContent] = useState({})
+    const [showCancel, setShowCancel] = useState(false)
 
     const getContent = async (moduleId) => {
         try {
@@ -27,6 +29,7 @@ const EditableBlock = ({moduleId}) => {
         } catch (e) {
             console.error('Error retrieving document: ', e)
         }
+        
     }
 
     useEffect(() => {
@@ -90,6 +93,7 @@ const EditableBlock = ({moduleId}) => {
     const handleClick = (newContent) => {
         console.log("NEW CONTENT", newContent)
         if(buttonState === 'Edit'){
+            setShowCancel(true)
             setTextEditorShow(true)
             //block.content
             setButtonState('Save')
@@ -106,11 +110,18 @@ const EditableBlock = ({moduleId}) => {
         //open up the text editor here
     }
 
+    const handleCancelClick = () => {
+        setTextEditorShow(false)
+        setButtonState('Edit')
+    }
+
+    
+
     return(
         <div>
             {textEditorShow === false ? (
                 <div>
-                    {content ? <p>{content}</p> : null}
+                    {content ? ReactHtmlParser(content) : null}
 
                     {/*{block.subheading ? <h3>{block.subheading}</h3> : null}
                     {block.body ? <p>{block.body}</p> : null}
@@ -135,7 +146,11 @@ const EditableBlock = ({moduleId}) => {
             <br />
             <br />
             <br />
-            {admin ? <Button onClick={ () => {handleClick(content)} }>{ buttonState }</Button> : null}
+            <div>
+                {admin ? <Button onClick={ () => {handleClick(content)} } style={{marginRight: '10px'}}>{ buttonState }</Button> : null}
+                {(admin && showCancel) ? <Button onClick={ () => {handleCancelClick()} }>Cancel</Button> : null}
+            </div>
+            
             
             
             
