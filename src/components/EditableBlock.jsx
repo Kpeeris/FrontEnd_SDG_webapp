@@ -12,7 +12,7 @@ const EditableBlock = ({moduleId}) => {
     let admin = true
 
     const [content, setContent] = useState("")
-    const [parsedContent, setParsedContent] = useState({})
+    //const [parsedContent, setParsedContent] = useState({})
     const [showCancel, setShowCancel] = useState(false)
 
     const getContent = async (moduleId) => {
