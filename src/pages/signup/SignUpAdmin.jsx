@@ -2,7 +2,6 @@ import SignupSVG from "@/assets/images/Signup.svg";
 import { LoginLink } from "./components/LoginLink";
 import { TwoColumnLayout } from "../../TwoColumnLayout";
 import { OTPForm } from "./components/OTPForm";
-import { ConfirmButton } from "./components/ConfirmButton";
 
 export const SignUpAdmin = () => {
   return (
